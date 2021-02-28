@@ -7,7 +7,7 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended:true}))
 app.use(passport.initialize())
 app.use(passport.session())
-int x=0;
+const { ensureAuthenticated, forwardAuthenticated } = require('./config');
 app.post('/api/signup',(req,res)=>{
  db.User.create(req.body)
  .then((user)=>{
@@ -17,16 +17,10 @@ app.post('/api/signup',(req,res)=>{
      console.log(err);
  })
 })
-function loggedIn(req, res, next) {
-    if (req.user) {
-        next();
-    } else {
-        res.redirect('/login');
-    }
-}
+
 app.post('/api/login',
   passport.authenticate('local', { successRedirect: '/api/users',
-                                   failureRedirect: '/login' }));
+                                   failureRedirect: '/api/login' }));
 
 app.get('/api/users',(req,res)=>{
     db.User.find()
@@ -40,7 +34,7 @@ app.get('/api/posts',(req,res)=>{
         res.send(data);
     })
 })
-app.post('/api/createpost',(req,res)=>{
+app.post('/api/createpost',ensureAuthenticated,(req,res)=>{
    
         db.Post.create({
             title:req.body.title,
