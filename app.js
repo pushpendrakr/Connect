@@ -20,7 +20,7 @@ app.post('/api/signup',(req,res)=>{
 
 app.post('/api/login',
   passport.authenticate('local', { successRedirect: '/api/users',
-                                   failureRedirect: '/api/login' }));
+                                   failureRedirect: '/' }));
 
 app.get('/api/users',(req,res)=>{
     db.User.find()
@@ -34,8 +34,11 @@ app.get('/api/posts',(req,res)=>{
         res.send(data);
     })
 })
+app.get('/',(req,res)=>{
+    res.send("error");
+})
 app.post('/api/createpost',ensureAuthenticated,(req,res)=>{
-   
+    
         db.Post.create({
             title:req.body.title,
             body:req.body.body,
@@ -43,9 +46,6 @@ app.post('/api/createpost',ensureAuthenticated,(req,res)=>{
         })
         .then((post)=>{res.send(post)})
         .catch((err)=>{res.send(err)})
-    
-
- 
 })
 
 app.listen(8080,()=>{console.log("Server started")});
