@@ -2,3 +2,13 @@
     margin:80px auto 0 auto;
     max-width:1200px;
 }
+body{
+    background-color:rgb(300,300,300);
+}
+a{
+    text-decoration:none;
+}
+.conatiner{
+    margin: 80px auto 0 auto;
+    max-width: 1200px;
+}

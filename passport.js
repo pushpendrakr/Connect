@@ -22,7 +22,7 @@ passport.use(new LocalStrategy(
     db.User.findOne({ username: username }, function (err, user) {
       if (err) {return done(err); }
       if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
+        return done(null, false, { message: '' });
       }
       if (user.password!==password) {
         return done(null, false, { message: 'Incorrect password.' });

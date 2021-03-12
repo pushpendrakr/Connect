@@ -17,19 +17,56 @@ app.use(session({
   const { ensureAuthenticated, forwardAuthenticated } = require('./config');
 
 app.post('/api/signup',(req,res)=>{
- db.User.create(req.body)
- .then((user)=>{
-     res.json(user);
- })
- .catch((err)=>{
-     console.log(err);
- })
+ 
+    db.User.findOne({username:req.body.username})
+    .then(user=>{
+        if(user)
+        res.status(400).json("User Already exist")
+        else{
+            db.User.create(req.body)
+            .then((user)=>{
+                res.json(user);
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
+        }
+    })
+  
+
 })
 
-app.post('/api/login',
-  passport.authenticate('local', { successRedirect: '/api/users',
-                                   failureRedirect: '/' }));
-
+app.post('/api/login', (req, res, next) => {
+    let error={
+    };
+    passport.authenticate("local", (err, user, info) => {
+       
+      if (err){
+          throw err;
+        }
+      if (!user){
+         
+          if(info.message=="Incorrect password.")
+         error.password="Incorrect password"
+         else error.username="No such user"
+      res.status(400).json(error);
+    }
+      else {
+        req.logIn(user, (err) => {
+          if (err) {console.log(err.response.data)
+              res.status(400).json(err)
+          }
+          res.send(req.user);
+        });
+      }
+    })(req, res, next);
+  });
+app.get('/api/isLoggedIn',(req,res)=>{
+    if(req.isAuthenticated()){
+    
+    res.status(200).json(1);}
+    else res.status(400).json(0);
+})
 app.get('/api/users',(req,res)=>{
     db.User.find()
     .then(function(users){ 
@@ -42,8 +79,11 @@ app.get('/api/posts',(req,res)=>{
         res.send(data);
     })
 })
+app.get('/api/logout', function(req, res){
+    req.logout();
+  });
 app.get('/',(req,res)=>{
-    res.send("error");
+    res.send("Welcome");
 })
 app.post('/api/createpost',ensureAuthenticated,(req,res)=>{
     
@@ -101,6 +141,9 @@ app.put('/api/comments',ensureAuthenticated,(req,res)=>{
      .then(function(data){
          res.send(data);
      })
+})
+app.get('/api/user',ensureAuthenticated,(req,res)=>{
+    res.send(req.user);
 })
 app.delete('/api/deletepost/:postid',ensureAuthenticated,(req,res)=>{
     db.Post.findOne({_id:req.params.postid})
