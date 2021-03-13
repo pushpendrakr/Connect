@@ -3,24 +3,21 @@ import axios from 'axios'
 import {Grid,Typography,withStyles} from '@material-ui/core'
 import Postcard from '../components/Postcard.js'
 import Profile from '../components/Profile'
+import {connect} from 'react-redux'
+import {getScreams} from '../redux/actions/dataaction.js'
  class home extends Component {
  state={
   posts:null
  }
 
   componentDidMount(){
-  axios.get('/api/getpost')
-  .then(res=>{console.log(res.data)
-      this.setState({
-          posts:res.data
-      })
-  })
+  this.props.getScreams();
   }
  
     render() {
-       
-        let post=this.state.posts;
-        let x=post?post.map(p1=>
+      
+        const{posts}=this.props.data;
+        let x=posts?posts.map(p1=>
            
             <Postcard Posts={p1}/>         
 
@@ -42,4 +39,13 @@ import Profile from '../components/Profile'
     }
 }
 
-export default (home)
+const mapStateToProps=(state)=>({
+    data:state.data,
+    });
+
+const mapActionsToProps={
+    getScreams
+}
+
+export default connect(mapStateToProps,mapActionsToProps)((home));
+

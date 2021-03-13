@@ -32,8 +32,6 @@ app.post('/api/signup',(req,res)=>{
             })
         }
     })
-  
-
 })
 
 app.post('/api/login', (req, res, next) => {
@@ -75,8 +73,19 @@ app.get('/api/users',(req,res)=>{
 })
 app.get('/api/posts',(req,res)=>{
     db.Post.find()
+    .populate("postedBy","_id username")
+    .populate("comments.postedBy","_id username")
     .then(function(data){
-        res.send(data);
+     res.send(data);
+    })                                                                                                                                  
+})
+app.get('/api/posts/:id',(req,res)=>{
+    db.Post.find({id:req.params.id})
+    .then(res1=>{
+        res.send(res1)
+    })
+    .catch(err=>{
+        res.status(400).json(err);
     })
 })
 app.get('/api/logout', function(req, res){
@@ -115,7 +124,8 @@ app.put('/api/like',ensureAuthenticated,(req,res)=>{
     db.Post.findByIdAndUpdate(req.body.postId,{
         $push:{likes:req.user._id}},
         {new:true}
-    ).then(function(data){
+    ).populate("postedBy","_id username")
+    .then(function(data){
         res.send(data);
     })
 })
@@ -123,7 +133,8 @@ app.put('/api/unlike',ensureAuthenticated,(req,res)=>{
     db.Post.findByIdAndUpdate(req.body.postId,{
         $pull:{likes:req.user._id}},
         {new:true}
-    ).then(function(data){
+    ).populate("postedBy","_id username")
+    .then(function(data){
         res.send(data);
     })
 })
@@ -143,7 +154,7 @@ app.put('/api/comments',ensureAuthenticated,(req,res)=>{
      })
 })
 app.get('/api/user',ensureAuthenticated,(req,res)=>{
-    res.send(req.user);
+    res.send(req.user); 
 })
 app.delete('/api/deletepost/:postid',ensureAuthenticated,(req,res)=>{
     db.Post.findOne({_id:req.params.postid})
@@ -163,8 +174,8 @@ app.delete('/api/deletepost/:postid',ensureAuthenticated,(req,res)=>{
     })
     .catch(err=>{res.send(err)});
 })
-app.get('/api/user/:userid',ensureAuthenticated,(req,res)=>{
-    db.User.findOne({_id:req.params.userid})
+app.get('/api/user/:userhandle',ensureAuthenticated,(req,res)=>{
+    db.User.findOne({username:req.params.userhandle})
     .then(user=>{
         db.Post.find({postedBy:req.params.userid})
         .populate("postedBy","_id username")

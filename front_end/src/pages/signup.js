@@ -62,8 +62,7 @@ class signup extends Component {
 
     render() {  
         const {classes,UI}=this.props;
-        console.log("Hello")
-        console.log(this.state.error)
+        
         return (
             
                 <Grid container className={classes.form}>

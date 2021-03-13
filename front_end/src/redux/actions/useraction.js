@@ -5,9 +5,7 @@ import axios from 'axios'
 export const loginUser=(userdata,history)=>(dispatch)=>{
  dispatch({type:LOADING_UI});
  axios.post('/api/login',userdata)
- .then(res=>{console.log("Success");
-         
-         dispatch(getUserdata())
+ .then(res=>{         dispatch(getUserdata())
          dispatch({type:CLEAR_ERRORS})
         history.push('/')
  })
@@ -21,7 +19,7 @@ export const loginUser=(userdata,history)=>(dispatch)=>{
 export const signupUser=(userdata,history)=>(dispatch)=>{
    
     axios.post('/api/signup',userdata)
-    .then(res=>{console.log("Success");
+    .then(res=>{
             
             dispatch(getUserdata())
             dispatch({type:CLEAR_ERRORS})
