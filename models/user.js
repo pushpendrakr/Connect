@@ -9,6 +9,10 @@ var userSchema= new mongoose.Schema({
         type : String ,
         required : true
     } ,
+    profilepic:{
+        type:String,
+        default:"uploads\\defautimg.jpeg",
+    },
     password:{
         type : String ,
         required : true

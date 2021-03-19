@@ -21,6 +21,7 @@ export default function(state=initialState,action){
             authenticated:true,
             ...action.payload
         }
+        
         default:
             return state
     }

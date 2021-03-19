@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component,Fragment} from 'react'
 import Link from 'react-router-dom/Link'
 import {CardActions, TextField, Typography,Checkbox,FormControlLabel} from '@material-ui/core'
 import Card from '@material-ui/core/Card';
@@ -15,18 +15,30 @@ import Favorite from '@material-ui/icons/Favorite';
 import FormGroup from '@material-ui/core/FormGroup';
 import {connect} from 'react-redux' 
 import {likeScream,unlikeScream}  from '../redux/actions/dataaction.js'
+import DeleteScream from './DeleteScream'
 const styles={
-    card:{
-        display:'flex',
-        marginBottom:20
+    card: {
+        position: 'relative',
+        display: 'flex',
+        marginBottom: 20
+      },
+      image: {
+        minWidth: 200,
+        width:0
+      },
+      content: {
+        padding: 25,
+        objectFit: 'cover'
+      },
+    text:{
+        color:'black'
     },
-    content:{
-        padding:25
-    }
 }
 
 
-export class  Postcard extends Component {
+ class  Postcard extends Component {
+
+    
     
      likedscream=()=>{
       
@@ -48,13 +60,23 @@ export class  Postcard extends Component {
      unlikeScream=()=>{
         this.props.unlikeScream(this.props.Posts._id);
      }
+     
+    userliked=()=>{
+
+    }
+
     render() {
         dayjs.extend(relativeTime)
+
         const {classes,
-            Posts:{postedBy:{id,username},createdAt,body},
+            Posts:{postedBy:{_id,username,profilepic},createdAt,body},
             user:{authenticated} 
                   }=this.props
-                  
+                
+      const deleteButton =
+                  authenticated && this.props.user.username === this.props.Posts.postedBy.username ? (
+                    <DeleteScream postId={this.props.Posts._id} />
+                  ) : console.log("Sorry1");
        const likebutton=!authenticated?(
        <MyButton tip="Like">
            <Link to='/login'>
@@ -71,19 +93,35 @@ export class  Postcard extends Component {
        </MyButton>)
        )
         return (
+            
+          
            <Card className={classes.card}>
+          
+        
+          <CardMedia
+          component="img"
+          image={`/${profilepic}`}
+          title="Profile image"
+          className={classes.image}
+        />
                <CardContent className={classes.content}>
-                   <Typography variant='h5' color="primary" component={Link} to={`/username`}>{username}</Typography>
+                   <Typography variant='h5' color="primary" component={Link} to={`/username/${username}`}>{username}</Typography>
+                   {deleteButton}
+                  <Typography className={classes.text} component={Link} to={`/post/${this.props.Posts._id}`}>
+                  
                    <Typography variant='body1'>{body}</Typography>
                    <Typography variant='body2' color='textSecondary'>{dayjs(createdAt).fromNow()}</Typography>
+                   </Typography>
+                   {likebutton} 
+                   <span onClick={this.userliked}>{Object.keys(this.props.Posts.likes).length} Likes</span>  
                   
-                   {likebutton}   
                       <MyButton tip="comments">    
-                   {/* <ChatIcon color="primary"/> */}
+                   <ChatIcon color="primary"/>                  
                    </MyButton>
-
+                   <span onClick={this.commentsection}>{Object.keys(this.props.Posts.comments).length} Comments</span>
                   </CardContent>
            </Card>
+         
         )
     }
 }

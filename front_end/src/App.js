@@ -11,36 +11,42 @@ import {Provider} from 'react-redux'
 import store from './redux/store'
 import {connect} from 'react-redux';
 import Authroute from './components/Authroutes'
+import post1 from './pages/post1'
+import user from './pages/user1'
+import pic from './components/pic'
 export class App extends Component {
  constructor(){
    super()
    this.state={
      isLoggedin:false,
+     user:null,
    }
  }
  componentWillReceiveProps(nextProps){
+   console.log(nextProps)
   this.setState({
-      isLoggedin:nextProps.user.authenticated
+      isLoggedin:nextProps.user.authenticated,
+      user:nextProps.user.username,
+
   })   
 }
-// componentDidMount(){
-//   axios.get('/api/isLoggedIn')
-//   .then(res=>{
-//     this.setStateisLoggedin:true
-//   })
-// }
+
  render() {
     const x=(this.state.isLoggedin);
-    const y=(this.state.isLoggedin);
+    const y=(this.state.user);
+    console.log(this.state)
     return (
       
       <div className="container">
         <Router>
-          <Navbar/>
+          <Navbar isLoggedin={this.state.isLoggedin} username={this.state.user}/>
           <Switch> 
            <Authroute exact path='/login' component={login}></Authroute>
           <Authroute exact path='/signup' component={signup}></Authroute>
             <Route exact path='/' component={home}></Route>
+            <Route exact path='/post/:post_id' component={post1}></Route>
+            <Route exact path='/username/:username' component={user}></Route>
+            <Route exact path='/uploadpic' component={pic}></Route>
           </Switch>
         </Router>
       </div>

@@ -1,11 +1,24 @@
 const express=require('express')
 var app=express();
 const db=require('./models')
+const user=db.user;
+const post=db.post;
 var bodyparser=require('body-parser')
 const passport=require('./passport')
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended:true}))
 var session = require('express-session');
+var multer  = require('multer')
+const storage=multer.diskStorage({
+    destination:function(req,file,cb){
+    cb(null,'./uploads')
+    },
+    filename:function(req,file,cb){
+        cb(null,new Date().toISOString().replace(/:/g, '-')+file.originalname);
+    }
+})
+var upload = multer({storage:storage})
+app.use('/uploads/',express.static('uploads'))
 
 app.use(session({
     secret: 'keyboard cat',
@@ -33,7 +46,12 @@ app.post('/api/signup',(req,res)=>{
         }
     })
 })
-
+app.get('/api/user1/:userhandle',(req,res)=>{
+    db.User.findOne({username:req.params.userhandle})
+    .then(user=>{//console.log(user)
+        res.send(user)
+    })
+})
 app.post('/api/login', (req, res, next) => {
     let error={
     };
@@ -71,16 +89,28 @@ app.get('/api/users',(req,res)=>{
         res.status(401).send(users)})
     .catch((err)=>{res.send(err)})
 })
+app.put('/api/uploadpic',ensureAuthenticated,upload.single('postimage'),(req,res,next)=>{
+    console.log(req.file)
+  db.User.findByIdAndUpdate(req.user._id,{$set:{profilepic:req.file.path}},{new:true})
+  .then(user=>{
+      res.send(user);
+  })
+  .catch(err=>{
+      res.send(err)
+  })
+})
 app.get('/api/posts',(req,res)=>{
     db.Post.find()
-    .populate("postedBy","_id username")
-    .populate("comments.postedBy","_id username")
+    .populate("postedBy","_id username profilepic")
+    .populate("comments.postedBy","_id username profilepic")
     .then(function(data){
      res.send(data);
     })                                                                                                                                  
 })
-app.get('/api/posts/:id',(req,res)=>{
-    db.Post.find({id:req.params.id})
+app.get('/api/posts/:id',(req,res)=>{console.log("Hello "+req.params.id)
+    db.Post.find({_id:req.params.id})
+    .populate("postedBy","_id username profilepic")
+    .populate("comments.postedBy","_id username profilepic")
     .then(res1=>{
         res.send(res1)
     })
@@ -90,6 +120,7 @@ app.get('/api/posts/:id',(req,res)=>{
 })
 app.get('/api/logout', function(req, res){
     req.logout();
+    res.send("logged out")
   });
 app.get('/',(req,res)=>{
     res.send("Welcome");
@@ -106,15 +137,15 @@ app.post('/api/createpost',ensureAuthenticated,(req,res)=>{
 })
 app.get('/api/getpost',(req,res)=>{
     db.Post.find()
-    .populate("postedBy","_id username")
-    .populate("comments.postedBy","_id username")
+    .populate("postedBy","_id username profilepic")
+    .populate("comments.postedBy","_id username profilepic")
     .then(function(data){
      res.send(data);
     })
 })
 app.get('/api/mypost',ensureAuthenticated,(req,res)=>{
     db.Post.find({postedBy:req.user._id})
-    .populate("postedBy","_id username")
+    .populate("postedBy","_id username profilepic")
     .sort("-createdAt")
     .then(function(data){
         res.send(data);
@@ -124,7 +155,7 @@ app.put('/api/like',ensureAuthenticated,(req,res)=>{
     db.Post.findByIdAndUpdate(req.body.postId,{
         $push:{likes:req.user._id}},
         {new:true}
-    ).populate("postedBy","_id username")
+    ).populate("postedBy","_id username profilepic")
     .then(function(data){
         res.send(data);
     })
@@ -133,7 +164,7 @@ app.put('/api/unlike',ensureAuthenticated,(req,res)=>{
     db.Post.findByIdAndUpdate(req.body.postId,{
         $pull:{likes:req.user._id}},
         {new:true}
-    ).populate("postedBy","_id username")
+    ).populate("postedBy","_id username profilepic")
     .then(function(data){
         res.send(data);
     })
@@ -147,10 +178,13 @@ app.put('/api/comments',ensureAuthenticated,(req,res)=>{
          $push:{comments:comment}},
         {new:true}
      )
-     .populate("comments.postedBy","_id username")
+     .populate("comments.postedBy","_id username profilepic")
      .populate("postedBy","_id username")
      .then(function(data){
          res.send(data);
+     })
+     .catch(res=>{
+         res.status(400).json(res)
      })
 })
 app.get('/api/user',ensureAuthenticated,(req,res)=>{
@@ -158,7 +192,8 @@ app.get('/api/user',ensureAuthenticated,(req,res)=>{
 })
 app.delete('/api/deletepost/:postid',ensureAuthenticated,(req,res)=>{
     db.Post.findOne({_id:req.params.postid})
-    .populate("postedBy","_id username")
+    .populate("comments.postedBy","_id username profilepic")
+     .populate("postedBy","_id username profilepic")
     .then(function(data){
       //  console.log(data);
         if(!data){
@@ -174,11 +209,12 @@ app.delete('/api/deletepost/:postid',ensureAuthenticated,(req,res)=>{
     })
     .catch(err=>{res.send(err)});
 })
-app.get('/api/user/:userhandle',ensureAuthenticated,(req,res)=>{
+app.get('/api/user/:userhandle',(req,res)=>{
     db.User.findOne({username:req.params.userhandle})
-    .then(user=>{
-        db.Post.find({postedBy:req.params.userid})
-        .populate("postedBy","_id username")
+    .then(user=>{//console.log(user)
+        db.Post.find({postedBy:user._id})
+        .populate("comments.postedBy","_id username profilepic")
+        .populate("postedBy","_id username profilepic")
         .then(data=>{
             res.send(data);
         })

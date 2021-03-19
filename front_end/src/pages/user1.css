@@ -1,0 +1,23 @@
+.container{
+    max-width: 1000px;
+}
+.d-flex{
+  display: flex;
+}
+.dp {
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    background-color: #8b4513;
+    font-size: 2.5em;
+    line-height: 1.8em;
+}
+.text-center{
+    text-align:center
+}
+.row{
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}

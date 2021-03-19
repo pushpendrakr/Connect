@@ -53,3 +53,13 @@ export const getUserdata=()=>(dispatch)=>{
      })
      .catch(err=>{console.log(err)})
 }
+
+export const uploadImage = (formData) => (dispatch) => {
+  
+    axios
+      .put('/api/uploadpic', formData)
+      .then(() => {
+        dispatch(getUserdata());
+      })
+      .catch((err) => console.log(err));
+  };

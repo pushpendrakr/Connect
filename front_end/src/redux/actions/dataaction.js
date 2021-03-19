@@ -122,7 +122,7 @@ import {
       .then((res) => {
         dispatch({
           type: SET_SCREAMS,
-          payload: res.data.posts
+          payload: res.data
         });
       })
       .catch(() => {

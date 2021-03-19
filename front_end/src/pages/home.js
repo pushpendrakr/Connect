@@ -9,7 +9,9 @@ import {getScreams} from '../redux/actions/dataaction.js'
  state={
   posts:null
  }
-
+//  componentDidUpdate(){
+//    this.props.getScreams();
+//  }
   componentDidMount(){
   this.props.getScreams();
   }
@@ -24,17 +26,14 @@ import {getScreams} from '../redux/actions/dataaction.js'
         ):<p>Loading...</p>
         
         return (
-           <Grid container spacint={16}>
-           <Grid item sm/>
-           <Grid item sm={6} >
-            {x}
-
-           </Grid>
-           <Grid item sm={4} xs={12}>
-             <Profile/>
-               </Grid>
-               
-           </Grid>
+            <Grid container spacing={5}>
+        <Grid item sm={8} xs={12}>
+          {x}
+        </Grid>
+        <Grid item sm={4} xs={12}>
+          <Profile />
+        </Grid>
+      </Grid>
         )
     }
 }
