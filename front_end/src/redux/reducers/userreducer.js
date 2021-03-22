@@ -5,7 +5,8 @@ const initialState={
     authenticated:false,
     credential:{},
     likes:{},
-    notifications:[]
+    notifications:[],
+    suggestedusers:[]
 }
 export default function(state=initialState,action){
     switch(action.type){
@@ -19,7 +20,11 @@ export default function(state=initialState,action){
         case SET_USER:
         return {
             authenticated:true,
-            ...action.payload
+            ...action.payload,
+        }
+        case 'SUGGESTED_USER':
+        return {
+            ...state,suggestedusers:action.payload
         }
         
         default:

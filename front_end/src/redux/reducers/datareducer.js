@@ -22,6 +22,9 @@ import {
           ...state,
           loading: true
         };
+      case 'INITIALIZE':
+          return initialState;
+        
       case SET_SCREAMS:
         return {
           ...state,

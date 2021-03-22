@@ -14,10 +14,11 @@ import LocationOn from '@material-ui/icons/LocationOn';
 import LinkIcon from '@material-ui/icons/Link';
 import CalendarToday from '@material-ui/icons/CalendarToday';
 import EditIcon from '@material-ui/icons/Edit';
-
+import EditProfile from '../components/edit.js';
+import { Dialog,DialogTitle,DialogActions,DeleteOutline} from '@material-ui/core';
 import { connect } from 'react-redux';
-import { getUserData } from '../redux/actions/dataaction';
-
+import { getUserdata } from '../redux/actions/useraction';
+import { uploadImage,followuser,unfollowuser} from '../redux/actions/useraction';
 const styles={
   paper: {
       padding: 20
@@ -71,32 +72,132 @@ const styles={
 class user extends Component {
     state = {
       profile: null,
-    
+       handle1:null,
+       open1:false,
+       open2:false,
+       post2:null
     };
-    componentDidMount() {
+    componentDidUpdate(){
       const handle = this.props.match.params.username;
-    
-  
-      this.props.getUserData(handle);
-      axios
-        .get(`/api/user1/${handle}`)
+     
+      axios.get(`/api/user1/${handle}`)
         .then((res) => {
        
           this.setState({
-            profile: res.data
+            profile: res.data,
+            handle1:handle
           });
         })
         .catch((err) => console.log(err));
+        axios.get(`/api/user/${handle}`)
+        .then(res=>{
+          this.setState({
+            post2:res.data,
+          })
+        })
     }
+    componentDidMount() {
+      const handle = this.props.match.params.username;
+     
+      axios.get(`/api/user1/${handle}`)
+        .then((res) => {
+       
+          this.setState({
+            profile: res.data,
+            handle1:handle
+          });
+        })
+        .catch((err) => console.log(err));
+        axios.get(`/api/user/${handle}`)
+        .then(res=>{
+          this.setState({
+            post2:res.data,
+          })
+        })
+        this.props.getUserdata();
+    }
+    handleImageChange = (event) => {
+      const image = event.target.files[0];
+      const formData = new FormData();
+      formData.append('postimage', image);
+      this.props.uploadImage(formData);
+      const handle = this.props.match.params.username;
+      axios.get(`/api/user1/${handle}`)
+      .then((res) => {
+     
+        this.setState({
+          profile: res.data,
+          handle1:handle
+        });
+      })
+      .catch((err) => console.log(err));
+      
+     
+      this.props.getUserData(handle);
+    };
+    handleEditPicture = () => {
+      const fileInput = document.getElementById('imageInput');
+      fileInput.click();
+      const handle = this.props.match.params.username;
+      axios
+      .get(`/api/user1/${handle}`)
+      .then((res) => {
+     
+        this.setState({
+          profile: res.data,
+          handle1:handle
+        });
+      })
+      .catch((err) => console.log(err));
+      
+     
+      this.props.getUserData(handle);
+    };
+    alreadyfollowed=()=>{
+      if(!this.props.user.authenticated)return false;
+      if(this.props.user.following.find(p=>(p===this.state.profile._id)))
+      return true;
+      return false;
+    }
+    followhandler=()=>{
+   //  console.log(this.props)
+     this.props.followuser(this.state.profile._id);
+     this.setState({ open1: false });
+     this.setState({ open2: false });
+     return;
+    }
+    unfollowhandler=()=>{
+   //   console.log(this.props)
+      this.props.unfollowuser(this.state.profile._id);
+      this.setState({ open1: false });
+      this.setState({ open2: false });
+      return;
+     }
+     
+    handleOpen1 = () => {
+      console.log("hello1")
+      this.setState({ open1: true });
+    };
+    handleClose1 = () => {
+      this.setState({ open1: false });
+    };
+    handleOpen2 = () => {console.log("hello2")
+      this.setState({ open2: true });
+    };
+    handleClose2 = () => {
+      this.setState({ open2: false });
+    };
     render() {
-      const { posts} = this.props.data;
-       console.log(this.state)
+      const {posts}=this.props.data  
       const {classes}=this.props
+      console.log(this.state.post2)
+     const post4=this.state.post2;
        const screamsMarkup =
-       posts === null ? ( 
+       post4 === null ? ( 
         <p>No screams from this user</p>
       ) : 
-       (posts.map((scream) => {
+       (post4.map((scream) => {
+        
          return <Postcard key={scream._id} Posts={scream} openDialog />;
         }))
      let p1=this.state.profile?(<Paper className={classes.paper}>
@@ -143,13 +244,28 @@ class user extends Component {
         {/* <EditDetails /> */}
       </div>
     </Paper>):(<span>Update Profile</span>) 
-     let x=0,y=0,z=0;
+     let x=0,y=0,z=0,p2=null,p3=null;
      if(this.state.profile){
        x=Object.keys(this.state.profile.followers).length;
        y=Object.keys(this.state.profile.following).length;
-       z=Object.keys(posts).length;
+       if(post4)z=Object.keys(post4).length;
+      
+       p2=null;
+      if(this.props.user.authenticated&&this.state.profile){
+        if(this.props.user.username!==this.state.profile.username){
+          this.alreadyfollowed()?
+        (p2=<Button variant='contained' color='primary' style={{marginLeft:'30em'}} onClick={this.handleOpen1}>unfollow</Button>):
+        (p2=<Button variant='contained' color='primary' style={{marginLeft:'30em'}} onClick={this.handleOpen2}>follow</Button>)
+      
+        }
+        else{
+          p2=(<EditProfile handleuser={this.handleuser} o={this.props.match.params.username}/>)
+        }
       }
-
+     p3=null;
+   
+    }
+    console.log(this.state)
         return (
           <div className="fullpage" style={{maxWidth:"70%",margin:"0 auto"}}>
               {p1}
@@ -158,8 +274,46 @@ class user extends Component {
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <h3>Following:&nbsp;{y}</h3>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <h3>Posts:&nbsp;{z}</h3>
-
+                <h3>Posts:&nbsp;{z}</h3>&nbsp;&nbsp;
+                {p2}
+      <Dialog
+      open={this.state.open1}
+      onClose={this.handleClose1}
+      fullWidth
+      maxWidth="sm"
+    >
+      <DialogTitle>
+        Are you sure you want to Unfollow ?
+      </DialogTitle>
+      <DialogActions>
+        <Button onClick={this.handleClose1} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={this.unfollowhandler} color="secondary">
+          Unfollow
+        </Button>
+      </DialogActions>
+    </Dialog>
+           
+    <Dialog
+      open={this.state.open2}
+      onClose={this.handleClose2}
+      fullWidth
+      maxWidth="sm"
+    >
+      <DialogTitle>
+        Are you sure you want to Follow  ?
+      </DialogTitle>
+      <DialogActions>
+        <Button onClick={this.handleClose2} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={this.followhandler} color="secondary">
+          Follow
+        </Button>
+      </DialogActions>
+    </Dialog>
+        
               </div>
                  <h3>Recent Posts:</h3>
                 <div className="profile-gallery" >
@@ -174,10 +328,11 @@ class user extends Component {
   
 
   const mapStateToProps = (state) => ({
-    data: state.data
+    data: state.data,
+    user:state.user
   });
-  
+
   export default connect(
     mapStateToProps,
-    { getUserData }
+    { getUserdata,uploadImage,followuser,unfollowuser}
   )(withStyles(styles)(user));

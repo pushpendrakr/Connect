@@ -6,6 +6,8 @@ import {withStyles} from '@material-ui/core/styles'
 import Postcard from '../components/Postcard'
 import Comments from './Comments'
 import CommentForm from './CommentForm'
+import {connect} from 'react-redux'
+import {getUserdata} from '../redux/actions/useraction.js'
 class Post1 extends Component {
     constructor(props){
         super(props)
@@ -14,21 +16,21 @@ class Post1 extends Component {
         }
     }
 
-//   componentDidUpdate(){
-//     const postid=this.props.match.params.post_id;
-     
+  componentDidUpdate(){
+    const postid=this.props.match.params.post_id;
 
-//     axios.get(`/api/posts/${postid}`)
-//     .then(res=>{
-//         this.setState({post:res.data[0]})
-//     }
+
+    axios.get(`/api/posts/${postid}`)
+    .then(res=>{
+        this.setState({post:res.data[0]})
+    }
     
-//     )
-//   }
+    )
+  }
     componentDidMount(){
         const postid=this.props.match.params.post_id;
      
-
+          this.props.getUserdata();
       axios.get(`/api/posts/${postid}`)
       .then(res=>{
           this.setState({post:res.data[0]})
@@ -54,5 +56,12 @@ class Post1 extends Component {
     }
 }
 
-export default (Post1);
 
+const mapStateToProps=(state)=>({
+user:state.user
+})
+const mapActionsToProps={
+    getUserdata
+}
+
+export default connect(mapStateToProps,mapActionsToProps)((Post1));

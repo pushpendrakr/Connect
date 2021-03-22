@@ -9,6 +9,8 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended:true}))
 var session = require('express-session');
 var multer  = require('multer')
+
+
 const storage=multer.diskStorage({
     destination:function(req,file,cb){
     cb(null,'./uploads')
@@ -135,8 +137,8 @@ app.post('/api/createpost',ensureAuthenticated,(req,res)=>{
         .then((post)=>{res.send(post)})
         .catch((err)=>{res.send(err)})
 })
-app.get('/api/getpost',(req,res)=>{
-    db.Post.find()
+app.get('/api/getpost/',(req,res)=>{
+    db.Post.find({postedBy:req.body.id})
     .populate("postedBy","_id username profilepic")
     .populate("comments.postedBy","_id username profilepic")
     .then(function(data){
@@ -187,8 +189,11 @@ app.put('/api/comments',ensureAuthenticated,(req,res)=>{
          res.status(400).json(res)
      })
 })
-app.get('/api/user',ensureAuthenticated,(req,res)=>{
-    res.send(req.user); 
+app.get('/api/user',(req,res)=>{
+    if (req.isAuthenticated()) {
+        res.send(req.user);
+    }
+    else res.status(400).json(false) 
 })
 app.delete('/api/deletepost/:postid',ensureAuthenticated,(req,res)=>{
     db.Post.findOne({_id:req.params.postid})
@@ -200,8 +205,8 @@ app.delete('/api/deletepost/:postid',ensureAuthenticated,(req,res)=>{
             res.send({message:"Post not found"});
         }
         if(data.postedBy._id.toString()===req.user._id.toString()){
-            db.Post.remove()
-            .then(function(data){
+            data.remove()
+            .then(function(data1){
                 res.send({message:"Post Deleted"});
             })
             .catch(function(err){res.send(err)});
@@ -211,7 +216,7 @@ app.delete('/api/deletepost/:postid',ensureAuthenticated,(req,res)=>{
 })
 app.get('/api/user/:userhandle',(req,res)=>{
     db.User.findOne({username:req.params.userhandle})
-    .then(user=>{//console.log(user)
+    .then(user=>{
         db.Post.find({postedBy:user._id})
         .populate("comments.postedBy","_id username profilepic")
         .populate("postedBy","_id username profilepic")
@@ -226,10 +231,10 @@ app.put('/api/follow',ensureAuthenticated,(req,res)=>{
         $push:{following:req.body.id}
      },{new:true} 
      )
-     .then(data=>{console.log(data);
+     .then(data=>{
          db.User.findByIdAndUpdate(req.body.id,{
-             $push:{follower:req.user._id}},{new:true})
-             .then(data1=>{console.log(data1);
+             $push:{followers:req.user._id}},{new:true})
+             .then(data1=>{console.log('hi2');console.log(data1);
                 console.log(data1.username);
                 res.send({message:"You are now following "+data1.username})
             })
@@ -244,15 +249,21 @@ app.put('/api/follow',ensureAuthenticated,(req,res)=>{
          )
          .then(data=>{console.log(data);
              db.User.findByIdAndUpdate(req.body.id,{
-                 $pull:{follower:req.user._id}},{new:true})
-                 .then(data1=>{//console.log(data1);
-                    //console.log(data1.username);
+                 $pull:{followers:req.user._id}},{new:true})
+                 .then(data1=>{
                     res.send({message:"You unfollowed "+data1.username})
                 })
              })
             
              .catch(err=>{res.send(err)});
          })
+
+app.put('/api/editdetails',ensureAuthenticated,(req,res)=>{
+   
+            db.User.findByIdAndUpdate(req.user._id,{email:req.body.email},{new:true})
+            .then((user)=>{
+                res.json(user);
+            })})
 
 
 app.post('/api/search',(req,res)=>{
@@ -262,6 +273,41 @@ db.User.find({username:{$regex:exp}})
     res.send(data);
 })
 .catch(err=>{res.send(err)})
+})
 
+app.get('/api/getsubpost',ensureAuthenticated,(req,res)=>{
+
+
+    db.Post.find({postedBy:{$in:[...req.user.following,req.user._id]}})
+      .populate("postedBy","_id username profilepic")
+    .populate("comments.postedBy","_id name")
+    .sort('-createdAt')
+    .then(posts=>{
+        res.send(posts)
+    })
+    .catch(err=>{
+        console.log(err)
+    })
+})
+app.get('/api/suggesteduser',ensureAuthenticated,(req,res)=>{
+    db.User.find({_id:{$nin:[...req.user.following,req.user._id]}})
+    .then(function(users){ 
+        res.send(users)
+    })
+    .catch((err)=>{res.send(err)})
+})
+app.delete('/api/deleteuser/:userid',ensureAuthenticated,(req,res)=>{
+    db.User.findOne({_id:req.params.userid})
+    .then(function(data){
+      //  console.log(data);
+        if(!data){
+            res.send({message:"User not found"});
+        }
+        db.User.remove()
+        .then(res=>{console.log("user removed")})
+        .catch(err=>{res.send(err)})
+       console.log("user removed")
+    })
+    .catch(err=>{res.send(err)});
 })
 app.listen(8080,()=>{console.log("Server started")});

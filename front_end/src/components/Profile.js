@@ -14,7 +14,7 @@ import LocationOn from '@material-ui/icons/LocationOn';
 import LinkIcon from '@material-ui/icons/Link';
 import CalendarToday from '@material-ui/icons/CalendarToday';
 import EditIcon from '@material-ui/icons/Edit';
-
+import KeyboardReturn from '@material-ui/icons/KeyboardReturn'
 import { connect } from 'react-redux';
 import { logoutUser, uploadImage } from '../redux/actions/useraction';
 
@@ -45,7 +45,7 @@ const styles={
             verticalAlign: 'middle'
           },
           '& a': {
-            color: '#00bcd4'
+            color: 'black'
           }
         },
         '& hr': {
@@ -77,7 +77,7 @@ class Profile extends Component {
       fileInput.click();
     };
     handleLogout = () => {
-        console.log("Hello")
+      //  console.log("Hello")
       this.props.logoutUser();
     };
     render() {
@@ -109,14 +109,14 @@ class Profile extends Component {
           </div>
           <hr />
           <div className="profile-details">
-            <MuiLink
+            <Typography
               component={Link}
               to={`/username/${username}`}
               color="primary"
               variant="h5"
             >
               @{username}
-            </MuiLink>
+              </Typography>
           
           
             {email && (
@@ -127,10 +127,11 @@ class Profile extends Component {
                 <hr />
               </Fragment>
             )}
-           
+           <MyButton tip="Logout" onClick={this.handleLogout}>
+           <KeyboardReturn color="primary" />
+           </MyButton>
           </div>
         
-          {/* <EditDetails /> */}
         </div>
       </Paper>
     )

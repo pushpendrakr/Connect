@@ -13,18 +13,20 @@ import { connect } from 'react-redux';
 
 class navbar extends Component {
     render() {
-        const{isLoggedin}=this.props
-       console.log(this.props)
+        const{user:{authenticated}}=this.props
+     console.log(this.props)
+
+
         return (
             <div>
                 <AppBar>
                     <Toolbar>
-                    {isLoggedin?(<Fragment>
+                    {authenticated?(<Fragment>
                    <Newpost/>
                    <Link to='/'>
                    <MyButton tip='Home'>
                    <Home /></MyButton></Link>
-                 
+                   
                   
                   </Fragment>):
 
@@ -38,9 +40,7 @@ class navbar extends Component {
                                 <Button color="inherit" component={Link} to='/'>
                                 Home
                                 </Button>
-                                <MyButton tip="Logout" onClick={this.handleLogout}>
-                           <KeyboardReturn color="primary" />
-                          </MyButton>
+                              
                                 </Fragment>)
 
                         }

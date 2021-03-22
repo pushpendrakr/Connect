@@ -1,6 +1,6 @@
 import React, { Component,Fragment} from 'react'
 import Link from 'react-router-dom/Link'
-import {CardActions, TextField, Typography,Checkbox,FormControlLabel} from '@material-ui/core'
+import {CardActions, TextField, Typography,Checkbox,FormControlLabel,Avatar,ListItemAvatar} from '@material-ui/core'
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -23,11 +23,14 @@ const styles={
         marginBottom: 20
       },
       image: {
-        minWidth: 200,
-        width:0
+        width: 200,
+        height: 200,
+        objectFit: 'cover',
+        maxWidth: '100%',
+        borderRadius: '50%'
       },
       content: {
-        padding: 25,
+        padding: 0,
         objectFit: 'cover'
       },
     text:{
@@ -49,7 +52,7 @@ const styles={
       
      }
      unlikedscream=()=>{
-        if(this.props.data.Posts.likes.find(p=>(p===this.props.user._id)))
+        if(this.props.data.posts.likes.find(p=>(p===this.props.user._id)))
         return false;
         return true;
         return false;
@@ -86,7 +89,7 @@ const styles={
        ):(
            this.likedscream()?(
                <MyButton tip='Undo like' onClick={this.unlikeScream}>
-                   <FavoriteIcon color='primary'></FavoriteIcon>
+                   <FavoriteIcon color='secondary'></FavoriteIcon>
                </MyButton>
            ):(<MyButton tip='Like' onClick={this.likeScream}>
            <FavoriteBorder color='primary'></FavoriteBorder>
@@ -96,16 +99,13 @@ const styles={
             
           
            <Card className={classes.card}>
-          
-        
-          <CardMedia
-          component="img"
-          image={`/${profilepic}`}
-          title="Profile image"
-          className={classes.image}
-        />
+          <ListItemAvatar>
+         <Avatar alt="dp" src={`/${profilepic}`} />
+           </ListItemAvatar>
+         
+         
                <CardContent className={classes.content}>
-                   <Typography variant='h5' color="primary" component={Link} to={`/username/${username}`}>{username}</Typography>
+                   <Typography variant='h6' color="primary" component={Link} to={`/username/${username}`}>{username}</Typography>
                    {deleteButton}
                   <Typography className={classes.text} component={Link} to={`/post/${this.props.Posts._id}`}>
                   

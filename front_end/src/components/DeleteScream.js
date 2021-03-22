@@ -14,8 +14,8 @@ import { deleteScream } from '../redux/actions/dataaction';
 const styles = {
     deleteButton: {
       position: 'absolute',
-      left: '80%',
-      top: '10%'
+      left: '90%',
+      top: '1%'
     },
     deleteb:{
         color:'black'
@@ -36,11 +36,12 @@ class DeleteScream extends Component {
       deleteScream = () => {
           
         this.props.deleteScream(this.props.postId);
+        this.setState({open:false})
     }
 
     render() {
     const { classes } = this.props;
-  console.log(this.props.postId)
+ // console.log(this.props.postId)
         return (
             <Fragment>
         <MyButton

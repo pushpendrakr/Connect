@@ -32,6 +32,22 @@ import {
         });
       });
   };
+  export const getPosts1= () => (dispatch) => {
+    
+    axios.get('/api/getsubpost')
+      .then((res) => {console.log(res.data)
+        dispatch({
+          type: SET_SCREAMS,
+          payload: res.data
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: SET_SCREAMS,
+          payload: []
+        });
+      });
+  };
   export const getScream = (screamId) => (dispatch) => {
     dispatch({ type: LOADING_UI });
     axios
@@ -132,7 +148,9 @@ import {
         });
       });
   };
+
   
+
   export const clearErrors = () => (dispatch) => {
     dispatch({ type: CLEAR_ERRORS });
   };
