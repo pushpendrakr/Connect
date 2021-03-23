@@ -152,7 +152,7 @@ class EditDetails extends Component {
     this.handleClose();
 
     this.props.editUserDetails(userDetails);
-    this.props.handleuser();
+    
   };
   handleImageChange = (event) => {
     const image = event.target.files[0];

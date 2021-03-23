@@ -17,8 +17,8 @@ import EditIcon from '@material-ui/icons/Edit';
 import EditProfile from '../components/edit.js';
 import { Dialog,DialogTitle,DialogActions,DeleteOutline} from '@material-ui/core';
 import { connect } from 'react-redux';
-import { getUserdata } from '../redux/actions/useraction';
-import { uploadImage,followuser,unfollowuser} from '../redux/actions/useraction';
+import { getUserData } from '../redux/actions/dataaction';
+import { uploadImage,followuser,unfollowuser,getUserdata} from '../redux/actions/useraction';
 const styles={
   paper: {
       padding: 20
@@ -334,5 +334,5 @@ class user extends Component {
 
   export default connect(
     mapStateToProps,
-    { getUserdata,uploadImage,followuser,unfollowuser}
+    { getUserdata,uploadImage,followuser,unfollowuser,getUserData}
   )(withStyles(styles)(user));

@@ -77,7 +77,7 @@ class Profile extends Component {
       fileInput.click();
     };
     handleLogout = () => {
-      //  console.log("Hello")
+      
       this.props.logoutUser();
     };
     render() {
