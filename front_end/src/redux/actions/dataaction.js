@@ -35,7 +35,7 @@ import {
   export const getPosts1= () => (dispatch) => {
     
     axios.get('/api/getsubpost')
-      .then((res) => {console.log(res.data)
+      .then((res) => {//console.log(res.data)
         dispatch({
           type: SET_SCREAMS,
           payload: res.data

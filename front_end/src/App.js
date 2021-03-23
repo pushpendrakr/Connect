@@ -15,6 +15,7 @@ import post1 from './pages/post1'
 import user from './pages/user1'
 import pic from './components/pic'
 import edit from './components/edit.js'
+import searchuser from './pages/searchuser'
 export class App extends Component {
  constructor(){
    super()
@@ -24,7 +25,7 @@ export class App extends Component {
    }
  }
  componentWillReceiveProps(nextProps){
-   console.log(nextProps)
+  // console.log(nextProps)
   this.setState({
       isLoggedin:nextProps.user.authenticated,
       user:nextProps.user.username,
@@ -49,6 +50,7 @@ export class App extends Component {
             <Route exact path='/username/:username' component={user}></Route>
             <Route exact path='/uploadpic' component={pic}></Route>
             <Route exact path='/editprofile' component={edit}></Route>
+            <Route exact path='/search/:username' component={searchuser}></Route>
           </Switch>
         </Router>
       </div>

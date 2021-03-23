@@ -9,7 +9,6 @@ const styles={
     root: {
         width: '100%',
         maxWidth: '36ch',
-        //backgroundColor: theme.palette.background.paper,
       },
       inline: {
         display: 'inline',
@@ -19,21 +18,27 @@ class Suggestions extends Component {
     state={
         followed:false,
     }
+   
    followhandler=()=>{
-       this.props.followuser(this.props.User._id);
-       this.setState({followed:true})
+   //  console.log(this.props.user._id+" "+this.props.User._id)
+     if(this.props.user._id===this.props.User._id)
+     return true;
+    if(this.props.user.following.find(p=>(p===this.props.User._id)))
+    return true;
+    return false;
    }
- 
+   followuser=()=>{
+    // console.log(this.props.User._id)
+      this.props.followuser(this.props.User._id)
+   }
     
     render() {
-      //  console.log(this.props)
-        console.log(this.state)
+        console.log(this.props)
         const {classes}=this.props
      let p1=null;
-      if(this.state.followed)
-      p1=<Button variant='contained' color='primary' style={{position:'absolute',left:'80%'}} disable onClick={this.followhandler}>Follow</Button>
-      else 
-      p1=<Button variant='contained' color='primary' style={{position:'absolute',left:'80%'}} onClick={this.followhandler}>Follow</Button>
+
+      p1=this.followhandler()?(<Button variant='contained' color='primary' style={{position:'absolute',left:'80%'}} disabled >Follow</Button>):
+     (<Button variant='contained' color='primary' style={{position:'absolute',left:'80%'}} onClick={this.followuser}>Follow</Button>)
 
         return (
           
