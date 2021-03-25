@@ -13,7 +13,7 @@ import {
     SUBMIT_COMMENT
   } from '../types';
   import axios from 'axios';
-  
+  import {uploadImage1} from './useraction.js'
   // Get all screams
   export const getScreams = () => (dispatch) => {
     dispatch({ type: LOADING_DATA });
@@ -70,7 +70,12 @@ import {
         dispatch({
           type: POST_SCREAM,
           payload: res.data
-        });
+        });console.log(newScream)
+        if(newScream.postimage){
+          const formData = new FormData();
+          formData.append('postimage', newScream.postimage);
+          formData.append('_id',res.data._id)
+        dispatch(uploadImage1(formData))}
         dispatch(clearErrors());
       })
       .catch((err) => {

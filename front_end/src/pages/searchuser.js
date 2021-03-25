@@ -1,6 +1,7 @@
-import { Typography } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import axios from 'axios'
 import React, { Component, Fragment } from 'react'
+import {Paper} from '@material-ui/core'
 import Suggestions from '../components/Suggestions.js'
 import {connect} from 'react-redux'
 import { getUserdata} from '../redux/actions/useraction';
@@ -23,8 +24,10 @@ export class searchuser extends Component {
   
     render() {
         console.log(this.state)
-        let v=this.state.users;
-        let y=v?v.map(p2=>
+        let v=null
+        v=this.state.users;
+        let y=null
+        y=v?v.map(p2=>
             (<Suggestions User={p2}/>)
             
            ):null
@@ -32,10 +35,13 @@ export class searchuser extends Component {
             <Fragment>
                 <Typography style={{textAlign:'center'}}variant='h4'>
                        People
-                       <div style={{marginLeft:'6em'}}>
+                       <div> {y&&(Object.keys(y).length>0)?(  <div style={{marginLeft:'8em'}}>
                        {y}
-                       </div>
+                       </div>):<span>...No Result Found</span>}</div>
                 </Typography>
+               
+               
+              
             </Fragment>
         )
     }

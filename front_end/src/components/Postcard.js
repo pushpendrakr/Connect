@@ -95,6 +95,11 @@ const styles={
            <FavoriteBorder color='primary'></FavoriteBorder>
        </MyButton>)
        )
+       console.log(this.props)
+       let v=null;
+       if(this.props.Posts.photo){
+       v=(<div><img src={`/${this.props.Posts.photo}`} alt="profile" className="profile-image" /></div>)
+        }
         return (
             
           
@@ -111,7 +116,9 @@ const styles={
                   
                    <Typography variant='body1'>{body}</Typography>
                    <Typography variant='body2' color='textSecondary'>{dayjs(createdAt).fromNow()}</Typography>
+                   
                    </Typography>
+                   {v}
                    {likebutton} 
                    <span onClick={this.userliked}>{Object.keys(this.props.Posts.likes).length} Likes</span>  
                   

@@ -12,6 +12,7 @@ import {
   const initialState = {
     posts: [],
     post: {},
+    post1:{},
     loading: false
   };
   
@@ -70,6 +71,11 @@ import {
         return {
             ...state
         }
+        case 'SET_SCREAM1':
+          return {
+            ...state,
+            post1: action.payload
+          };
       default:
         return state;
     }

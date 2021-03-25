@@ -73,9 +73,9 @@ class login extends Component {
                 
                 <Grid item sm>
                 <Typography  variant="h3" className={classes.pageTitle}>Login</Typography>
-                <form onSubmit={this.handleSubmit}>
-                    <TextField className={classes.textField}type='username'value={this.state.username} name='username' id='username' label='Username' helperText={x1} error={x  }onChange={this.handleChange}fullWidth/>
-                    <TextField className={classes.textField}type='password'value={this.state.password} name='password'id='password' label='Password' helperText={y1} error={y}onChange={this.handleChange}fullWidth/>
+                <form onSubmit={this.handleSubmit} autoComplete='off'>
+                    <TextField variant="outlined" className={classes.textField}type='username'value={this.state.username} name='username' id='username' label='Username' helperText={x1} error={x  }onChange={this.handleChange}fullWidth/>
+                    <TextField variant="outlined"className={classes.textField}type='password'value={this.state.password} name='password'id='password' label='Password' helperText={y1} error={y}onChange={this.handleChange}fullWidth/>
                     <Button variant='contained' color='primary'type='submit'className={classes.button}>Submit</Button>
                  </form>   
                 </Grid>

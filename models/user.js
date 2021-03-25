@@ -19,7 +19,7 @@ var userSchema= new mongoose.Schema({
     } ,
     followers:[{type:ObjectId,ref:"User"}],
     following:[{type:ObjectId,ref:"User"}],
-        
+    notification:[{type:Array }]
 })
 var User=mongoose.model('User',userSchema);
 module.exports=User;

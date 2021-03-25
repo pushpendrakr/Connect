@@ -30,6 +30,7 @@ app.use(session({
   app.use(passport.session())
 
   const { ensureAuthenticated, forwardAuthenticated } = require('./config');
+const { Db } = require('mongodb');
 
 app.post('/api/signup',(req,res)=>{
  
@@ -92,12 +93,24 @@ app.get('/api/users',(req,res)=>{
     .catch((err)=>{res.send(err)})
 })
 app.put('/api/uploadpic',ensureAuthenticated,upload.single('postimage'),(req,res,next)=>{
-    console.log(req.file)
+  
   db.User.findByIdAndUpdate(req.user._id,{$set:{profilepic:req.file.path}},{new:true})
   .then(user=>{
       res.send(user);
   })
   .catch(err=>{
+      res.send(err)
+  })
+})
+app.put('/api/postpic',ensureAuthenticated,upload.single('postimage'),(req,res,next)=>{
+    console.log(req.file)
+  db.Post.findByIdAndUpdate(req.body._id,{$set:{photo:req.file.path}},{new:true})
+  .then(user=>{
+      console.log(user);
+      res.send(user)
+  })
+  .catch(err=>{
+      console.log(err);
       res.send(err)
   })
 })
@@ -128,11 +141,12 @@ app.get('/',(req,res)=>{
     res.send("Welcome");
 })
 app.post('/api/createpost',ensureAuthenticated,(req,res)=>{
-    
+
         db.Post.create({
             title:req.body.title,
             body:req.body.body,
             postedBy:req.user,
+        
         })
         .then((post)=>{res.send(post)})
         .catch((err)=>{res.send(err)})
@@ -154,6 +168,25 @@ app.get('/api/mypost',ensureAuthenticated,(req,res)=>{
     })
 })
 app.put('/api/like',ensureAuthenticated,(req,res)=>{
+    db.Post.findById(req.body.postId,(err,p)=>{
+        if(err){
+            res.status(400).json(err);
+        }
+        else{
+            db.User.findById(p.postedBy,(err,d1)=>{
+            
+                if(err){
+                    res.status(400).json(err);
+                }
+                else{
+                    d1.notification.push("You have a new Like by "+req.user.username+" on the post "+p.title);
+                    d1.save();
+                }
+            
+            })
+        }
+    })
+
     db.Post.findByIdAndUpdate(req.body.postId,{
         $push:{likes:req.user._id}},
         {new:true}
@@ -163,6 +196,7 @@ app.put('/api/like',ensureAuthenticated,(req,res)=>{
     })
 })
 app.put('/api/unlike',ensureAuthenticated,(req,res)=>{
+
     db.Post.findByIdAndUpdate(req.body.postId,{
         $pull:{likes:req.user._id}},
         {new:true}
@@ -176,18 +210,41 @@ app.put('/api/comments',ensureAuthenticated,(req,res)=>{
         text:req.body.text,
         postedBy:req.user._id
     }
-     db.Post.findByIdAndUpdate(req.body.postId,{
-         $push:{comments:comment}},
-        {new:true}
-     )
-     .populate("comments.postedBy","_id username profilepic")
-     .populate("postedBy","_id username")
-     .then(function(data){
-         res.send(data);
-     })
-     .catch(res=>{
-         res.status(400).json(res)
-     })
+   
+   db.Post.findById(req.body.postId,(err,p)=>{
+    
+    if(err){
+           res.status(400).json(err);
+       }
+       else{
+           db.User.findById(p.postedBy,(err,d1)=>{
+              
+               if(err){
+                   res.status(400).json(err);
+               }
+               else{
+                   d1.notification.push("You have a new Comment on the post "+p.title+" by "+req.user.username);
+                   d1.save();
+               }
+            
+           })
+       }
+   })
+   
+   
+    db.Post.findByIdAndUpdate(req.body.postId,{
+        $push:{comments:comment}},
+       {new:true}
+    )
+    .populate("comments.postedBy","_id username profilepic")
+    .populate("postedBy","_id username")
+    .then(function(data){
+        res.send(data);
+    })
+    .catch(res=>{
+        res.status(400).json(res)
+    })     
+
 })
 app.get('/api/user',(req,res)=>{
     if (req.isAuthenticated()) {
@@ -200,7 +257,6 @@ app.delete('/api/deletepost/:postid',ensureAuthenticated,(req,res)=>{
     .populate("comments.postedBy","_id username profilepic")
      .populate("postedBy","_id username profilepic")
     .then(function(data){
-      //  console.log(data);
         if(!data){
             res.send({message:"Post not found"});
         }
@@ -227,6 +283,8 @@ app.get('/api/user/:userhandle',(req,res)=>{
     })
 })
 app.put('/api/follow',ensureAuthenticated,(req,res)=>{
+
+
     db.User.findByIdAndUpdate(req.user._id,{
         $push:{following:req.body.id}
      },{new:true} 
@@ -234,8 +292,19 @@ app.put('/api/follow',ensureAuthenticated,(req,res)=>{
      .then(data=>{
          db.User.findByIdAndUpdate(req.body.id,{
              $push:{followers:req.user._id}},{new:true})
-             .then(data1=>{console.log('hi2');console.log(data1);
-                console.log(data1.username);
+             .then(data1=>{
+                db.User.findById(data1._id,(err,d1)=>{
+                
+                    if(err){
+                        res.status(400).json(err);
+                    }
+                    else{
+                        d1.notification.push(req.user.username+" started following you");
+                        d1.save();
+                    }
+                  
+                })
+
                 res.send({message:"You are now following "+data1.username})
             })
          })
@@ -247,10 +316,21 @@ app.put('/api/follow',ensureAuthenticated,(req,res)=>{
             $pull:{following:req.body.id}
          },{new:true} 
          )
-         .then(data=>{console.log(data);
+         .then(data=>{
              db.User.findByIdAndUpdate(req.body.id,{
                  $pull:{followers:req.user._id}},{new:true})
                  .then(data1=>{
+                    db.User.findById(data1._id,(err,d1)=>{
+                
+                        if(err){
+                            res.status(400).json(err);
+                        }
+                        else{
+                            d1.notification.push(req.user.username+" unfollowed you");
+                            d1.save();
+                        }
+                       
+                    })
                     res.send({message:"You unfollowed "+data1.username})
                 })
              })
@@ -299,7 +379,7 @@ app.get('/api/suggesteduser',ensureAuthenticated,(req,res)=>{
 app.delete('/api/deleteuser/:userid',ensureAuthenticated,(req,res)=>{
     db.User.findOne({_id:req.params.userid})
     .then(function(data){
-      //  console.log(data);
+  
         if(!data){
             res.send({message:"User not found"});
         }
@@ -310,4 +390,12 @@ app.delete('/api/deleteuser/:userid',ensureAuthenticated,(req,res)=>{
     })
     .catch(err=>{res.send(err)});
 })
+app.post('/api/notifications',ensureAuthenticated,(req,res)=>{
+    let n=req.user.notification
+    let b=[];
+    req.user.notification=b;
+    req.user.save();
+    res.json(n);
+})
+
 app.listen(8080,()=>{console.log("Server started")});

@@ -77,6 +77,16 @@ export const uploadImage = (formData) => (dispatch) => {
       })
       .catch((err) => console.log(err));
   };
+  export const uploadImage1 = (formData) => (dispatch) => {
+  
+    axios
+      .put('/api/postpic', formData)
+      .then(() => {
+        dispatch(getUserdata());
+       
+      })
+      .catch((err) => console.log(err));
+  };
   export const editUserDetails = (userDetails) => (dispatch) => {
   
     axios
@@ -121,3 +131,9 @@ export const suggesteduser=()=>(dispatch)=> {
     })
     .catch((err) => console.log(err));
 };
+export const markNotificationsRead=()=>(dispatch)=>{
+  axios.post('/api/notifications')
+  .then(res=>{
+    dispatch(getUserdata());
+  })
+}

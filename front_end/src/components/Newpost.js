@@ -8,10 +8,12 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
+import EditIcon from '@material-ui/icons/Edit';
 import MyButton from './MyButton';
 import { connect } from 'react-redux';
-import { postScream,} from '../redux/actions/dataaction';
+import { postScream} from '../redux/actions/dataaction';
 
+import {uploadImage1} from '../redux/actions/useraction';
 const styles = ({
     submitButton: {
       position: 'relative',
@@ -32,9 +34,22 @@ export class Newpost extends Component {
     state = {
         open: false,
         body: '',
-        title:''
+        title:'',
+        image:null
       };
-
+      handleImageChange = (event) => {
+        const image1 = event.target.files[0];
+        const formData = new FormData();
+        formData.append('postimage', image1);
+   
+        this.setState({
+          image:image1,
+        })
+      };
+      handleEditPicture = () => {
+        const fileInput = document.getElementById('imageInput');
+        fileInput.click();
+      };
     handleOpen = () => {
         this.setState({ open: true });
       };
@@ -47,7 +62,14 @@ export class Newpost extends Component {
       };
       handleSubmit = (event) => {
         event.preventDefault();
-        this.props.postScream({ body: this.state.body,title:this.state.title});
+        this.props.postScream({ body: this.state.body,title:this.state.title,postimage:this.state.image});
+        console.log(this.props)
+        // if(this.state.image){
+        //   const formData = new FormData();
+        //   formData.append('postimage', this.state.image);
+        //   formData.append('_id',this.props.data.post1._id)
+        //   this.props.uploadImage1(formData)
+        // }
         this.setState({
             open:false
         })
@@ -56,7 +78,7 @@ export class Newpost extends Component {
           const {classes}=this.props
             return (
                 <Fragment>
-                  <MyButton onClick={this.handleOpen} tip="Post a Scream!">
+                  <MyButton onClick={this.handleOpen} tip="New Post!">
                     <AddIcon />
                   </MyButton>
                   <Dialog
@@ -72,28 +94,14 @@ export class Newpost extends Component {
                     >
                       <CloseIcon />
                     </MyButton>
-                    <DialogTitle>Post a new scream</DialogTitle>
+                    <DialogTitle>New Post</DialogTitle>
                     <DialogContent>
                       <form onSubmit={this.handleSubmit}>
-                        <TextField
-                          name="body"
-                          type="text"
-                          label="SCREAM!!"
-                          multiline
-                          rows="3"
-                          placeholder="Add a new Post"
-                        //   error={errors.body ? true : false}
-                        //   helperText={errors.body}
-                          className={classes.textField}
-                          onChange={this.handleChange}
-                          fullWidth
-                        />
-                        <TextField
+                      <TextField
                           name="title"
                           type="text"
-                          label="Title!!"
+                          label="Title"
                           multiline
-                          rows="3"
                           placeholder="Add Title"
                         //   error={errors.body ? true : false}
                         //   helperText={errors.body}
@@ -101,6 +109,30 @@ export class Newpost extends Component {
                           onChange={this.handleChange}
                           fullWidth
                         />
+                        <TextField
+                          name="body"
+                          type="text"
+                          label="New Post"
+                          multiline
+                          placeholder="Add a new Post"
+                        //   error={errors.body ? true : false}
+                        //   helperText={errors.body}
+                          className={classes.textField}
+                          onChange={this.handleChange}
+                          fullWidth
+                        />
+                      <input
+              type="file"
+              id="imageInput"
+              // hidden="hidden"
+              onChange={this.handleImageChange}
+            />
+                       {/* <MyButton
+              tip="Add Picture"
+              onClick={this.handleEditPicture}
+              btnClassName="button"
+            >
+            <EditIcon color="primary" />Add Picture </MyButton> */}
                         <Button
                           type="submit"
                           variant="contained"
@@ -119,10 +151,11 @@ export class Newpost extends Component {
     }
 }
 const mapStateToProps = (state) => ({
-    UI: state.UI
+    UI: state.UI,
+    data:state.data
   });
 
 export default connect(
     mapStateToProps,
-    { postScream }
+    { postScream,uploadImage1}
   )(withStyles(styles)(Newpost));
