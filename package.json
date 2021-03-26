@@ -7,7 +7,7 @@
     "npm":"6.x"
   },
   "scripts": {
-  
+    "start": "node app.js",
     "heroku-postbuild":"NPM_CONFIG_PRODUCTION=false npm install --prefix front_end && npm run build --prefix front_end",
     
   },
