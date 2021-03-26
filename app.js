@@ -10,7 +10,6 @@ const passport=require('./passport')
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended:true}))
 var session = require('express-session');
-
 mongoose.connect(MONGOURI,{useNewUrlParser:true , useUnifiedTopology: true , useFindAndModify: false});
 mongoose.connection.on('connected',()=>{
     console.log("connected ;)");
