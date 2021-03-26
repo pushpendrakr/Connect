@@ -1,6 +1,8 @@
 const express=require('express')
 var app=express();
 const db=require('./models')
+const mongoose = require("mongoose");
+const {MONGOURI} = require("./prod/keys");
 const user=db.user;
 const post=db.post;
 var bodyparser=require('body-parser')
@@ -8,6 +10,15 @@ const passport=require('./passport')
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended:true}))
 var session = require('express-session');
+
+mongoose.connect(MONGOURI,{useNewUrlParser:true , useUnifiedTopology: true , useFindAndModify: false});
+mongoose.connection.on('connected',()=>{
+    console.log("connected ;)");
+})
+mongoose.connection.on('error',(err)=>{
+    console.log("error connecting :(  : ",err);
+})
+
 var multer  = require('multer')
 
 
@@ -397,5 +408,13 @@ app.post('/api/notifications',ensureAuthenticated,(req,res)=>{
     req.user.save();
     res.json(n);
 })
+
+if(process.env.NODE_ENV=="production"){
+    app.use(express.static('front_end/build'))
+    const path = require('path')
+    app.get("*",(req,res)=>{
+        res.sendFile(path.resolve(__dirname,'front_end','build','index.html'))
+    })
+}
 
 app.listen(process.env.PORT||8080,()=>{console.log("Server started")});
