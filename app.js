@@ -398,4 +398,4 @@ app.post('/api/notifications',ensureAuthenticated,(req,res)=>{
     res.json(n);
 })
 
-app.listen(8080,()=>{console.log("Server started")});
+app.listen(process.env.PORT||8080,()=>{console.log("Server started")});
