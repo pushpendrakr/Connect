@@ -20,7 +20,6 @@ mongoose.connection.on('error',(err)=>{
 
 var multer  = require('multer')
 
-
 const storage=multer.diskStorage({
     destination:function(req,file,cb){
     cb(null,'./uploads')
