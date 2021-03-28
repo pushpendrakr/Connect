@@ -148,9 +148,7 @@ app.get('/api/logout', function(req, res){
     req.logout();
     res.send("logged out")
   });
-app.get('/',(req,res)=>{
-    res.send("Welcome");
-})
+
 app.post('/api/createpost',ensureAuthenticated,(req,res)=>{
 
         db.Post.create({
