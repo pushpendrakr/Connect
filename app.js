@@ -1,15 +1,7 @@
 const express=require('express')
 var app=express();
-const db=require('./models')
 const mongoose = require("mongoose");
 const {MONGOURI} = require("./prod/keys");
-const user=db.user;
-const post=db.post;
-var bodyparser=require('body-parser')
-const passport=require('./passport')
-app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({extended:true}))
-var session = require('express-session');
 mongoose.connect(MONGOURI,{useNewUrlParser:true , useUnifiedTopology: true , useFindAndModify: false});
 mongoose.connection.on('connected',()=>{
     console.log("connected ;)");
@@ -17,6 +9,16 @@ mongoose.connection.on('connected',()=>{
 mongoose.connection.on('error',(err)=>{
     console.log("error connecting :(  : ",err);
 })
+
+const db=require('./models')
+
+const user=db.user;
+const post=db.post;
+var bodyparser=require('body-parser')
+const passport=require('./passport')
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({extended:true}))
+var session = require('express-session');
 
 var multer  = require('multer')
 
