@@ -2,9 +2,15 @@ const express=require('express')
 var app=express();
 const mongoose = require("mongoose");
 const {MONGOURI} = require("./prod/keys");
+mongoose.connect(MONGOURI,{useNewUrlParser:true , useUnifiedTopology: true , useFindAndModify: false});
+mongoose.connection.on('connected',()=>{
+    console.log("connected ;)");
+})
+mongoose.connection.on('error',(err)=>{
+    console.log("error connecting :(  : ",err);
+})
 
 const db=require('./models')
-
 const user=db.user;
 const post=db.post;
 var bodyparser=require('body-parser')
@@ -373,10 +379,16 @@ app.get('/api/getsubpost',ensureAuthenticated,(req,res)=>{
 })
 app.get('/api/suggesteduser',ensureAuthenticated,(req,res)=>{
     
-  var users=await dfs(req.user._id)
+    db.User.find()
+    .then(function(allusers){ 
+        console.log(allusers.length)
+        var user=dfs(req.user._id,allusers)
+        console.log(user)
+       res.send(user) 
+       
+    })
+    .catch((err)=>{res.send(err)})
   
-  res.send(users)
-
 })
 app.delete('/api/deleteuser/:userid',ensureAuthenticated,(req,res)=>{
     db.User.findOne({_id:req.params.userid})
