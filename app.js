@@ -2,13 +2,6 @@ const express=require('express')
 var app=express();
 const mongoose = require("mongoose");
 const {MONGOURI} = require("./prod/keys");
-mongoose.connect(MONGOURI,{useNewUrlParser:true , useUnifiedTopology: true , useFindAndModify: false});
-mongoose.connection.on('connected',()=>{
-    console.log("connected ;)");
-})
-mongoose.connection.on('error',(err)=>{
-    console.log("error connecting :(  : ",err);
-})
 
 const db=require('./models')
 
@@ -19,7 +12,7 @@ const passport=require('./passport')
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended:true}))
 var session = require('express-session');
-
+const dfs=require('./dfs.js')
 var multer  = require('multer')
 
 const storage=multer.diskStorage({
@@ -253,8 +246,8 @@ app.put('/api/comments',ensureAuthenticated,(req,res)=>{
     .catch(res=>{
         res.status(400).json(res)
     })     
-
 })
+
 app.get('/api/user',(req,res)=>{
     if (req.isAuthenticated()) {
         res.send(req.user);
@@ -379,11 +372,11 @@ app.get('/api/getsubpost',ensureAuthenticated,(req,res)=>{
     })
 })
 app.get('/api/suggesteduser',ensureAuthenticated,(req,res)=>{
-    db.User.find({_id:{$nin:[...req.user.following,req.user._id]}})
-    .then(function(users){ 
-        res.send(users)
-    })
-    .catch((err)=>{res.send(err)})
+    
+  var users=await dfs(req.user._id)
+  
+  res.send(users)
+
 })
 app.delete('/api/deleteuser/:userid',ensureAuthenticated,(req,res)=>{
     db.User.findOne({_id:req.params.userid})
