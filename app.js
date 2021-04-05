@@ -419,5 +419,25 @@ if(process.env.NODE_ENV=="production"){
         res.sendFile(path.resolve(__dirname,'front_end','build','index.html'))
     })
 }
+app.post('/api/followers',ensureAuthenticated,(req,res)=>{
+    db.User.findOne({_id:req.body.id})
+    .then(user=>{
+        db.User.find({_id:{$in:[...user.followers]}})
+        .then(p1=>{
+            res.send(p1)
+        })
+    })
+})
+app.post('/api/following',ensureAuthenticated,(req,res)=>{
+  
+    db.User.findOne({_id:req.body.id})
+    .then(user=>{
+        db.User.find({_id:{$in:[...user.following]}})
+        .then(p1=>{
+            res.send(p1)
+        })
+    })
+
+})
 
 app.listen(process.env.PORT||8080,()=>{console.log("Server started")});

@@ -160,14 +160,14 @@ class user extends Component {
       return false;
     }
     followhandler=()=>{
-   //  console.log(this.props)
+ 
      this.props.followuser(this.state.profile._id);
      this.setState({ open1: false });
      this.setState({ open2: false });
      return;
     }
     unfollowhandler=()=>{
-   //   console.log(this.props)
+  
       this.props.unfollowuser(this.state.profile._id);
       this.setState({ open1: false });
       this.setState({ open2: false });
@@ -194,7 +194,7 @@ class user extends Component {
      const post4=this.state.post2;
        const screamsMarkup =
        post4 === null ? ( 
-        <p>No screams from this user</p>
+        <p>No Posts from this user</p>
       ) : 
        (post4.map((scream) => {
         
@@ -255,8 +255,8 @@ class user extends Component {
       if(this.props.user.authenticated&&this.state.profile){
         if(this.props.user.username!==this.state.profile.username){
           this.alreadyfollowed()?
-        (p2=<Button variant='contained' color='primary' style={{marginLeft:'30em'}} onClick={this.handleOpen1}>unfollow</Button>):
-        (p2=<Button variant='contained' color='primary' style={{marginLeft:'30em'}} onClick={this.handleOpen2}>follow</Button>)
+        (p2=<Button variant='contained' color='primary' style={{marginLeft:'23em'}} onClick={this.handleOpen1}>unfollow</Button>):
+        (p2=<Button variant='contained' color='primary' style={{marginLeft:'25em'}} onClick={this.handleOpen2}>follow</Button>)
       
         }
         else{
@@ -266,16 +266,22 @@ class user extends Component {
      p3=null;
    
     }
-    console.log(this.state)
+     let x5=this.state.profile?this.state.profile._id:null;
+
+    
         return (
           <div className="fullpage" style={{maxWidth:"70%",margin:"0 auto"}}>
               {p1}
               <div style={{display:'flex'}}>
-                <h3>Followers:&nbsp;{x}</h3>
+                <Link to={`/followers/${x5}`} style={{color:'black'}}>
+                <Button variant='contained' color='primary'style={{marginTop:'1em'}}><b>Followers:</b>&nbsp;{x}</Button></Link>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <h3>Following:&nbsp;{y}</h3>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <h3>Posts:&nbsp;{z}</h3>&nbsp;&nbsp;
+                <Link to={`/following/${x5}`} style={{color:'black'}}>
+                <Button variant='contained' color='primary'style={{marginTop:'1em'}}><b>Following:</b>&nbsp;{y}</Button></Link>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <Link style={{color:'black'}}>
+                <Button variant='contained' color='primary'style={{marginTop:'1em'}}><b>Posts:</b>&nbsp;{z}</Button></Link>
+
                 {p2}
       <Dialog
       open={this.state.open1}

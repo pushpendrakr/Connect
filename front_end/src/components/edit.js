@@ -169,7 +169,7 @@ class EditDetails extends Component {
     return (
       <Fragment>
        
-          <Button variant="contained" color='primary' style={{marginLeft:'28em'}} onClick={this.handleOpen}>Edit Details</Button>
+          <Button variant="contained" color='primary' style={{marginLeft:'25em'}} onClick={this.handleOpen}>Edit Details</Button>
       
         <Dialog
           open={this.state.open}

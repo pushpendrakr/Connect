@@ -16,6 +16,8 @@ import user from './pages/user1'
 import pic from './components/pic'
 import edit from './components/edit.js'
 import searchuser from './pages/searchuser'
+import followers from './pages/followers'
+import following from './pages/following'
 export class App extends Component {
  constructor(){
    super()
@@ -50,6 +52,8 @@ export class App extends Component {
             <Route exact path='/uploadpic' component={pic}></Route>
             <Route exact path='/editprofile' component={edit}></Route>
             <Route exact path='/search/:username' component={searchuser}></Route>
+            <Route exact path='/followers/:id' component={followers}></Route>
+            <Route exact path='/following/:id' component={following}></Route>
           </Switch>
         </Router>
        

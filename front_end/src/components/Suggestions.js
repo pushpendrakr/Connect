@@ -23,7 +23,7 @@ class Suggestions extends Component {
    //  console.log(this.props.user._id+" "+this.props.User._id)
      if(this.props.user._id===this.props.User._id)
      return true;
-    if(this.props.user.following.find(p=>(p===this.props.User._id)))
+    if(this.props.user.following&&this.props.user.following.find(p=>(p===this.props.User._id)))
     return true;
     return false;
    }
