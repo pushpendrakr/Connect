@@ -113,10 +113,10 @@ app.put('/api/uploadpic',ensureAuthenticated,upload.single('postimage'),(req,res
   })
 })
 app.put('/api/postpic',ensureAuthenticated,upload.single('postimage'),(req,res,next)=>{
-    console.log(req.file)
+  
   db.Post.findByIdAndUpdate(req.body._id,{$set:{photo:req.file.path}},{new:true})
   .then(user=>{
-      console.log(user);
+     
       res.send(user)
   })
   .catch(err=>{

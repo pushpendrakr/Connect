@@ -200,23 +200,24 @@ class user extends Component {
         
          return <Postcard key={scream._id} Posts={scream} openDialog />;
         }))
+  
+
      let p1=this.state.profile?(<Paper className={classes.paper}>
       <div className={classes.profile}>
         <div className="image-wrapper">
           <img src={`/${this.state.profile.profilepic}`} alt="profile" className="profile-image" />
-          <input
+        <input
             type="file"
             id="imageInput"
             hidden="hidden"
-            onChange={this.handleImageChange}
-          />
+            onChange={this.handleImageChange}/>
+         {(this.props.user.username===this.state.profile.username)&&
           <MyButton
             tip="Edit profile picture"
             onClick={this.handleEditPicture}
-            btnClassName="button"
-          >
+            btnClassName="button">
           <EditIcon color="primary" />
-          </MyButton>
+          </MyButton>}
         </div>
         <hr />
         <div className="profile-details">
@@ -231,7 +232,7 @@ class user extends Component {
         
         
           {this.state.profile.email && (
-            <Fragment>
+            <Fragment>  
               <LinkIcon color="primary" />
              <hr/>
              <span>email: {this.state.profile.email}</span>

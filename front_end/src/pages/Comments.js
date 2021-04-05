@@ -4,6 +4,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
 // MUI
+import {Avatar,ListItemAvatar} from '@material-ui/core' 
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import CommentForm from './CommentForm.js'
@@ -39,13 +40,11 @@ class Comments extends Component {
               <Grid item sm={12}>
                 <Grid container>
                  
-                  <Grid item sm={2}>
-                  <img
-                      src={`/${profilepic}`}
-                      alt="comment"
-                      className={classes.commentImage}
-                    /> </Grid>
-                    <div className={classes.commentData}>
+                  <Grid item sm={0.5}>
+                
+                      <Avatar alt="dp" src={`/${profilepic}`}/>
+                     </Grid>
+                    <div className={classes.commentData} style={{marginRight:'5em'}}>
                       <Typography
                         variant="h5"
                         component={Link}

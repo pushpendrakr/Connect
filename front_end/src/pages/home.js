@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import './home.css'
 import axios from 'axios'
 import {Grid,Typography,withStyles,Paper} from '@material-ui/core'
 import Postcard from '../components/Postcard.js'
@@ -13,23 +14,22 @@ import {getUserdata} from '../redux/actions/useraction.js'
   }
  
     render() {
-      // console.log(this.props)
         const{posts}=this.props.data;
-        console.log(posts)
+       console.log(this.props)
         const {suggestedusers}=this.props.user
        
-        let x=posts?posts.map(p1=>
+        let x=(this.props.user.authenticated)?posts.map(p1=>
            
             <Postcard Posts={p1}/>         
 
-        ):<p>Loading...</p>
+        ):(<div><img src='uploads\\2021-04-04T13-46-49.629Zdownload (7).jfif'className='set'/></div>)
         let cnt=0;
         let v=suggestedusers?suggestedusers.slice(0,5):null
         let y=v?v.map(p2=>
            (<Suggestions User={p2}/>)
            
           ):null
-
+          console.log(x)
         return (
             <Grid container spacing={5}>
         <Grid item sm={8} xs={12}>

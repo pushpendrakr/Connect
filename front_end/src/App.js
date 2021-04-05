@@ -36,7 +36,6 @@ export class App extends Component {
  render() {
     const x=(this.state.isLoggedin);
     const y=(this.state.user);
-   // console.log(this.state)
     return (
       
       <div className="container">
@@ -53,6 +52,7 @@ export class App extends Component {
             <Route exact path='/search/:username' component={searchuser}></Route>
           </Switch>
         </Router>
+       
       </div>
   )}}
 

@@ -60,10 +60,12 @@ class navbar extends Component {
     render() {
         const{user:{authenticated}}=this.props
     const {classes}=this.props
-  
+    
         return (
             <div>
+
                 <AppBar>
+               
                     <Toolbar>
                     {authenticated?(<Fragment>
                    <Newpost/>
@@ -71,6 +73,7 @@ class navbar extends Component {
                    <MyButton tip='Home'>
                    <Home /></MyButton></Link>
                    <Notifications/>
+                   
                    <Paper style={{marginLeft:'30em'}}> 
                        <InputBase
                        name='user'
@@ -83,6 +86,7 @@ class navbar extends Component {
       <IconButton type="submit" className={classes.iconButton} aria-label="search" onClick={this.handlesubmit}>
         <SearchIcon />
       </IconButton></Paper>
+        
                   {this.state.ready&&(<Redirect to={`/search/${this.state.user}`}></Redirect>)}
                   </Fragment>):
 

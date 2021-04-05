@@ -4,7 +4,8 @@ import Link from 'react-router-dom/Link'
 import {Button} from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import MuiLink from '@material-ui/core/Link';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCoffee,faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import dayjs from 'dayjs';
 // import EditDetails from './EditDetails';
 import MyButton from './MyButton';
@@ -88,6 +89,7 @@ class Profile extends Component {
           authenticated
         }
       } = this.props;
+      const element =<FontAwesomeIcon style={{color:'black'}}icon={faSignOutAlt} />
     let p1=(
       <Paper className={classes.paper}>
         <div className={classes.profile}>
@@ -128,7 +130,8 @@ class Profile extends Component {
               </Fragment>
             )}
            <MyButton tip="Logout" onClick={this.handleLogout}>
-           <KeyboardReturn color="primary" />
+          {element}
+
            </MyButton>
           </div>
         

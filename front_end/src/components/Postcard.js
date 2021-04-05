@@ -6,6 +6,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import {withStyles} from '@material-ui/core/styles'
 import dayjs from 'dayjs'
+
 import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import ChatIcon from  '@material-ui/icons/Chat';
@@ -70,7 +71,7 @@ const styles={
 
     render() {
         dayjs.extend(relativeTime)
-
+        
         const {classes,
             Posts:{postedBy:{_id,username,profilepic},createdAt,body},
             user:{authenticated} 
@@ -105,6 +106,7 @@ const styles={
           
            <Card className={classes.card}>
           <ListItemAvatar>
+         
          <Avatar alt="dp" src={`/${profilepic}`} />
            </ListItemAvatar>
          
@@ -121,11 +123,11 @@ const styles={
                    {v}
                    {likebutton} 
                    <span onClick={this.userliked}>{Object.keys(this.props.Posts.likes).length} Likes</span>  
-                  
+                  <Link to={`/post/${this.props.Posts._id}`} style={{color:'black'}}>
                       <MyButton tip="comments">    
                    <ChatIcon color="primary"/>                  
                    </MyButton>
-                   <span onClick={this.commentsection}>{Object.keys(this.props.Posts.comments).length} Comments</span>
+                   <span onClick={this.commentsection}>{Object.keys(this.props.Posts.comments).length} Comments</span></Link>
                   </CardContent>
            </Card>
          

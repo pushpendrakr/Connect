@@ -7,7 +7,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import DeleteOutline from '@material-ui/icons/DeleteOutline';
 import axios from 'axios'
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCoffee,faBackspace} from '@fortawesome/free-solid-svg-icons'
 import { connect } from 'react-redux';
 import { deleteScream } from '../redux/actions/dataaction';
 
@@ -42,10 +43,12 @@ class DeleteScream extends Component {
     render() {
     const { classes } = this.props;
  // console.log(this.props.postId)
+ 
+const element =<FontAwesomeIcon style={{color:'black'}}icon={faBackspace} />
         return (
             <Fragment>
         <MyButton
-          tip="Delete Scream"
+          tip="Delete Post"
           onClick={this.handleOpen}
           btnClassName={classes.deleteButton}
         >
