@@ -10,7 +10,7 @@ export class searchuser extends Component {
         users:null
     }
     componentDidMount(){
-        
+        this.props.getUserdata();
         const id1=this.props.match.params.id;
         axios.post('/api/following',{id:id1})
         .then(res=>{
