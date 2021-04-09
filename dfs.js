@@ -19,8 +19,6 @@ function dfs(startingid,allusers){
         let users=[]
         let usersid=[]
         var m=helper(allusers,startingid)
-
-        console.log(m.following)
         while (q.length>0) {
            
             var getQueueElement = q.shift();
@@ -55,7 +53,7 @@ function dfs(startingid,allusers){
                if(users.length>=5)return users;
              }
          }
-         console.log(users)
+        
    return users
 }
 

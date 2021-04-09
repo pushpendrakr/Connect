@@ -355,12 +355,14 @@ app.put('/api/editdetails',ensureAuthenticated,(req,res)=>{
 
 
 app.post('/api/search',ensureAuthenticated,(req,res)=>{
-    const exp=new RegExp("^"+req.body.query);
+    
+const exp=new RegExp("^"+req.body.query);
 db.User.find({username:{$regex:exp}})
 .then(data=>{
     res.send(data);
 })
 .catch(err=>{res.send(err)})
+
 })
 
 app.get('/api/getsubpost',ensureAuthenticated,(req,res)=>{
